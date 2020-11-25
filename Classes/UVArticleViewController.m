@@ -29,7 +29,7 @@
 
     CGFloat footerHeight = 46;
     _webView = [WKWebView new];
-    _webView.delegate = self;
+    _webView.navigationDelegate = self;
     NSString *section = _article.topicName ? [NSString stringWithFormat:@"%@ / %@", NSLocalizedStringFromTableInBundle(@"Knowledge Base", @"UserVoice", [UserVoice bundle], nil), _article.topicName] : NSLocalizedStringFromTableInBundle(@"Knowledge base", @"UserVoice", [UserVoice bundle], nil);
     NSString *linkColor;
     if (IOS7) {
@@ -93,14 +93,14 @@
 //    if (navigationType == UIWebViewNavigationTypeLinkClicked) {
 //        return ![[UIApplication sharedApplication] openURL:request.URL];
 //    }
-//    return YES;
+//    return YES;uservoice-ios-sdk
 //}
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler{
     if (navigationAction.navigationType == WKNavigationTypeLinkActivated) {
-        decisionHandler([[UIApplication sharedApplication] openURL:request.URL] ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow)
+        decisionHandler([[UIApplication sharedApplication] openURL:navigationAction.request.URL] ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
     } else {
-        decisionHandler(WKNavigationActionPolicyAllow)
+        decisionHandler(WKNavigationActionPolicyAllow);
     }
 }
 
