@@ -28,7 +28,7 @@
     self.navigationItem.title = @"";
 
     CGFloat footerHeight = 46;
-    _webView = [UIWebView new];
+    _webView = [WKWebView new];
     _webView.delegate = self;
     NSString *section = _article.topicName ? [NSString stringWithFormat:@"%@ / %@", NSLocalizedStringFromTableInBundle(@"Knowledge Base", @"UserVoice", [UserVoice bundle], nil), _article.topicName] : NSLocalizedStringFromTableInBundle(@"Knowledge base", @"UserVoice", [UserVoice bundle], nil);
     NSString *linkColor;
@@ -88,13 +88,22 @@
     [self.view bringSubviewToFront:bg];
 }
 
+// Original logic on UIWebView kept intentionally for reference
+//- (BOOL)webView:(UIWebView *)view shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+//    if (navigationType == UIWebViewNavigationTypeLinkClicked) {
+//        return ![[UIApplication sharedApplication] openURL:request.URL];
+//    }
+//    return YES;
+//}
 
-- (BOOL)webView:(UIWebView *)view shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    if (navigationType == UIWebViewNavigationTypeLinkClicked) {
-        return ![[UIApplication sharedApplication] openURL:request.URL];
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler{
+    if (navigationAction.navigationType == WKNavigationTypeLinkActivated) {
+        decisionHandler([[UIApplication sharedApplication] openURL:request.URL] ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow)
+    } else {
+        decisionHandler(WKNavigationActionPolicyAllow)
     }
-    return YES;
 }
+
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (_helpfulPrompt) {
